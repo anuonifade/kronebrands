@@ -22,8 +22,8 @@ services:
     name: kronebrands-api
     runtime: python
     rootDir: backend
-    plan: starter # `free` also works, but it sleeps when idle and the first request after a sleep is slow
-    region: frankfurt # closest Render region to Lagos; both services should match
+    plan: 0.5c-512mb # `free` also works, but it sleeps when idle and the first request after a sleep is slow
+    region: frankfurt # closest Render region to Lagos; match it on the Mongo service below if you use one
     healthCheckPath: /api/health
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -82,7 +82,8 @@ services:
     name: kronebrands-web
     runtime: static
     rootDir: frontend
-    region: frankfurt
+    # No region here: static sites are served from Render's global CDN, and the
+    # blueprint is rejected if you give one.
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     routes:
@@ -111,7 +112,7 @@ services:
 #    name: kronebrands-mongo
 #    runtime: image
 #    region: frankfurt
-#    plan: starter
+#    plan: 0.5c-512mb
 #    image:
 #      url: docker.io/library/mongo:7
 #    disk:
