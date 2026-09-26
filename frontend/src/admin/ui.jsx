@@ -134,6 +134,7 @@ export function useAsync(fn, deps = []) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
+  // Concise on purpose here: reload() hands back the "ignore this response" cleanup.
   useEffect(() => reload(), [reload]);
   return useMemo(() => ({ ...state, reload, set: (data) => setState({ data, error: "", loading: false }) }), [state, reload]);
 }

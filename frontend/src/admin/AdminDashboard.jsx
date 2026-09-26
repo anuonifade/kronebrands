@@ -41,7 +41,7 @@ export default function AdminDashboard() {
               sub={`${s.products_active} of ${s.products_total} products live`} />
       </div>
 
-      <div className="grid grid--2-1">
+      <div className="cols cols--2-1">
         <Panel title={`Revenue, last ${s.window_days} days`}>
           {s.period.revenue_cents > 0
             ? <RevenueChart series={s.series} />
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
         </Panel>
       </div>
 
-      <div className="grid grid--2-1">
+      <div className="cols cols--2-1">
         <Panel title="Recent orders" action={<Link className="linkbtn" to="/admin/orders">All orders</Link>}>
           {s.recent_orders.length === 0 ? (
             <Empty title="No orders yet" hint="They'll show up here the moment one is placed." />

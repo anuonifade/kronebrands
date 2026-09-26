@@ -25,7 +25,7 @@ export default function AdminCustomerDetail() {
         <Stat label="Customer since" value={dateTime(c.first_order_at).split(",")[0]} sub={`Last order ${dateTime(c.last_order_at)}`} />
       </div>
 
-      <div className="grid grid--2-1">
+      <div className="cols cols--2-1">
         <Panel title="Order history">
           <div className="table-wrap table-wrap--flush">
             <table className="table">

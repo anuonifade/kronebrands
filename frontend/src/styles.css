@@ -319,9 +319,10 @@ p { margin: 0 0 1rem; max-width: 62ch; }
 .seg__btn:hover { color: var(--ink); }
 .seg__btn.is-on { background: var(--a-surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(27,26,24,.08); }
 
-/* Layout grids */
-.grid { display: grid; gap: 1rem; align-items: start; }
-.grid--2-1 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+/* Layout grids. Named `cols`, not `grid`: the shop already owns `.grid` for its
+   product tiles, and a second meaning would silently restyle it. */
+.cols { display: grid; gap: 1rem; align-items: start; }
+.cols--2-1 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
 
 /* Stat tiles */
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1rem; }
@@ -552,7 +553,7 @@ p { margin: 0 0 1rem; max-width: 62ch; }
   }
   .admin__burger { display: block; }
   .admin__toolbar .search { margin-left: 0; width: 100%; }
-  .grid--2-1, .aod__grid { grid-template-columns: 1fr; }
+  .cols--2-1, .aod__grid { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr 1fr; }
   .formgrid, .formgrid--2, .zone__grid { grid-template-columns: 1fr; }
   .table-wrap--flush { margin: 0 -1.5rem -1.25rem; }

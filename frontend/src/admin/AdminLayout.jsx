@@ -37,7 +37,9 @@ export default function AdminLayout() {
     if (me) api.admin.stats({ days: 7 }).then((s) => setQueue(s.to_fulfil)).catch(() => {});
   }, [me, pathname]);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   if (!me) return null;
   const title = TITLES.find(([p]) => pathname.startsWith(p))?.[1] ?? "Admin";

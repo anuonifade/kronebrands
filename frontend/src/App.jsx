@@ -37,7 +37,12 @@ function StoreLayout() {
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  // The block body matters: current Chrome returns a Promise from scrollTo, and a
+  // concise arrow would hand that to React as the effect's cleanup. React calls the
+  // cleanup when this unmounts — on every navigation — and blows up the whole tree.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
   return null;
 }
 

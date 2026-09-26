@@ -62,7 +62,7 @@ export default function AdminSettings() {
 
       {error && <p className="error" role="alert">{error}</p>}
 
-      <div className="grid grid--2-1">
+      <div className="cols cols--2-1">
         <div>
           <Panel
             title="Shipping zones"
