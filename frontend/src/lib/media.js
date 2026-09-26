@@ -7,8 +7,8 @@ export const media = {
   heroVideo: `${CDN}/hf_20260926_051442_8558bd5c-3d84-4f95-8968-7984facb2e81.mp4`,
   lifestyle: `${CDN}/hf_20260926_060327_13d9bd40-0bc2-4d13-a5aa-745a8a7a963f.png`,
   lifestyleVideo: `${CDN}/hf_20260926_060539_b4bd05fb-5db4-4849-86e7-6d94f0269f75.mp4`,
-  craft: `${CDN}/hf_20260926_055512_d8b674c0-0c42-43e9-8916-f67e1971ad26.png`,
-  craftVideo: `${CDN}/hf_20260926_060540_0b77d270-4fb2-4166-91fd-7e1e36f3ca7f.mp4`,
+  craft: `${CDN}/hf_20260926_175813_da428203-250d-4bc3-9b8c-28fb036d07f7.png`,
+  craftVideo: `${CDN}/hf_20260926_181935_41ccb694-c570-4beb-b13d-6d8b826a10d5.mp4`,
   magentaTurntable: `${CDN}/hf_20260926_045938_c54dbb1e-0a18-4f47-9db5-101ade133800.mp4`,
 };
 

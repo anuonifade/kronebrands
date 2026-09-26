@@ -1,0 +1,120 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# Two services: the storefront as a static site on Render's CDN, and the FastAPI
+# app as a Python web service. Both the shop and /admin are served by the static
+# site; it calls the API over the public internet.
+#
+# DATABASE: Render has no managed MongoDB, so the database lives outside this
+# blueprint. Create a cluster (MongoDB Atlas has a free M0 tier) and paste its
+# connection string when Render prompts for MONGO_URL. To keep Mongo inside
+# Render instead, see the commented block at the bottom of this file.
+#
+# SERVICE URLS: because the two services sit on different origins, each has to be
+# told the other's address, and Render only knows those once the services exist.
+# The values below assume Render grants the names as written. If a name is
+# already taken Render appends a suffix — then update VITE_API_URL on the web
+# service and CORS_ORIGINS plus FRONTEND_URL on the API to the real URLs, and
+# redeploy. A mismatch shows up as CORS errors in the browser console.
+
+services:
+  # ---------- API ----------
+  - type: web
+    name: kronebrands-api
+    runtime: python
+    rootDir: backend
+    plan: starter # `free` also works, but it sleeps when idle and the first request after a sleep is slow
+    region: frankfurt # closest Render region to Lagos; both services should match
+    healthCheckPath: /api/health
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+
+      # Paste your Atlas connection string, including the database user and
+      # password, e.g. mongodb+srv://user:pass@cluster0.xxxxx.mongodb.net
+      - key: MONGO_URL
+        sync: false
+      - key: MONGO_DB
+        value: kronebrands
+
+      # Signs admin sessions. Render generates it; rotating it signs everyone out.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # The admin account is created on first boot only. Changing these later
+      # does not update the existing account — change the password in Mongo, or
+      # drop the admins collection and restart.
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+      # Must be the storefront's URL. CORS_ORIGINS is a comma-separated list;
+      # add your custom domain here too once it's attached.
+      - key: FRONTEND_URL
+        value: https://kronebrands-web.onrender.com
+      - key: CORS_ORIGINS
+        value: https://kronebrands-web.onrender.com
+
+      # These only seed the shipping rates on first boot. After that the rates
+      # are edited in Admin → Settings and live in the database.
+      - key: SHIPPING_FLAT_CENTS
+        value: "2500"
+      - key: FREE_SHIPPING_THRESHOLD_CENTS
+        value: "50000"
+
+      # ----- Optional, add in the Render dashboard when you need them -----
+      # Payments. Leave unset to stay in demo mode, where orders are marked paid
+      # without charging. Set both to go live, and point a Stripe webhook at
+      # https://<api-url>/api/payments/stripe/webhook
+      #   STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+      #
+      # Admin image uploads. Unset means admins add images by URL.
+      #   MEDIA_STORAGE=s3         with S3_BUCKET, S3_REGION, AWS_ACCESS_KEY_ID,
+      #                            AWS_SECRET_ACCESS_KEY, and optionally
+      #                            S3_PUBLIC_BASE_URL / S3_ENDPOINT_URL
+      #   MEDIA_STORAGE=cloudinary with CLOUDINARY_CLOUD_NAME,
+      #                            CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
+
+  # ---------- Storefront + admin ----------
+  - type: web
+    name: kronebrands-web
+    runtime: static
+    rootDir: frontend
+    region: frankfurt
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      # React Router owns the URLs, so anything that isn't a built file has to be
+      # handed to index.html — otherwise /shop and /admin 404 on a refresh.
+      - type: rewrite
+        source: "/**"
+        destination: "/index.html"
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # Baked into the bundle at build time, so changing it needs a redeploy.
+      - key: VITE_API_URL
+        value: https://kronebrands-api.onrender.com
+
+# ---------- Alternative: MongoDB inside Render ----------
+# Uncomment the service below and change the API's MONGO_URL from `sync: false`
+# to `value: mongodb://kronebrands-mongo:27017` — private services are reachable
+# from your other services by name.
+#
+# This keeps everything in one blueprint, but it is a single node on a single
+# disk with no automatic backups and no failover. For a shop holding real orders,
+# a managed cluster is the safer choice.
+#
+#  - type: pserv
+#    name: kronebrands-mongo
+#    runtime: image
+#    region: frankfurt
+#    plan: starter
+#    image:
+#      url: docker.io/library/mongo:7
+#    disk:
+#      name: mongo-data
+#      mountPath: /data/db
+#      sizeGB: 10

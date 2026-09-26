@@ -75,7 +75,7 @@ SHOTS = {
 # Editorial stills used outside the catalogue.
 IMG = {
     "lifestyle": f"{CDN}/hf_20260926_060327_13d9bd40-0bc2-4d13-a5aa-745a8a7a963f.png",
-    "craft": f"{CDN}/hf_20260926_055512_d8b674c0-0c42-43e9-8916-f67e1971ad26.png",
+    "craft": f"{CDN}/hf_20260926_175813_da428203-250d-4bc3-9b8c-28fb036d07f7.png",
 }
 
 VIDEO = {
